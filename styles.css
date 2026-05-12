@@ -882,13 +882,13 @@ body::before {
 
   .quiz-card--assessment {
     padding-top: 12px;
-    padding-bottom: 112px;
+    padding-bottom: 18px;
   }
 
   .assessment-head {
-    position: sticky;
-    top: 8px;
-    z-index: 6;
+    position: relative;
+    top: auto;
+    z-index: auto;
     padding: 12px;
     margin: 0 0 14px;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -905,9 +905,9 @@ body::before {
   }
 
   .quiz-actions--assessment {
-    position: sticky;
-    bottom: 8px;
-    z-index: 5;
+    position: relative;
+    bottom: auto;
+    z-index: auto;
     padding: 12px;
     margin-top: 18px;
     border-radius: 20px;
@@ -918,7 +918,7 @@ body::before {
 
   .quiz-note {
     margin-top: 18px;
-    padding-bottom: 8px;
+    padding-bottom: 0;
   }
 }
 
@@ -1058,16 +1058,11 @@ body::before {
   }
 
   .quiz-actions--assessment {
-    bottom: 6px;
     padding: 10px;
     border-radius: 18px;
   }
 
   .quiz-card--assessment {
-    padding-bottom: 104px;
-  }
-
-  .quiz-note {
-    padding-bottom: 6px;
+    padding-bottom: 14px;
   }
 }
