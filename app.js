@@ -424,11 +424,12 @@ function renderAssessment() {
   const ticketNumber = Math.floor(assessment.currentIndex / TEST_QUESTION_COUNT) + 1;
   const questionInTicket = (assessment.currentIndex % TEST_QUESTION_COUNT) + 1;
   const timeLeft = assessment.mode === "exam" ? formatTime(getTimeLeftMs()) : "Без лимита";
+  const progressPercent = Math.max(4, Math.round(((assessment.currentIndex + 1) / assessment.questionCount) * 100));
 
   quizApp.innerHTML = `
-    <section class="quiz-card">
+    <section class="quiz-card quiz-card--assessment">
       <div class="assessment-head">
-        <div>
+        <div class="assessment-head__main">
           <div class="assessment-mode-row">
             <span class="pill">${escapeHtml(getModeLabel(assessment.mode))}</span>
             <span class="pill">${escapeHtml(assessment.topicTitle)}</span>
@@ -437,6 +438,9 @@ function renderAssessment() {
           <div class="quiz-card__title">Вопрос ${assessment.currentIndex + 1} из ${assessment.questionCount}</div>
           <div class="quiz-card__body">
             ${escapeHtml(`В билете: ${questionInTicket} / ${TEST_QUESTION_COUNT}`)}
+          </div>
+          <div class="assessment-progress" aria-hidden="true">
+            <div class="assessment-progress__bar" style="width:${progressPercent}%"></div>
           </div>
         </div>
         <div class="timer-card ${assessment.mode === "exam" ? "timer-card--active" : ""}">
@@ -453,7 +457,8 @@ function renderAssessment() {
               const isSelected = selectedAnswer === index;
               return `
                 <button class="answer-option ${isSelected ? "is-selected" : ""}" data-answer-index="${index}">
-                  ${escapeHtml(option)}
+                  <span class="answer-option__key">${String.fromCharCode(65 + index)}</span>
+                  <span class="answer-option__text">${escapeHtml(option)}</span>
                 </button>
               `;
             })
@@ -461,7 +466,7 @@ function renderAssessment() {
         </div>
       </div>
 
-      <div class="quiz-actions">
+      <div class="quiz-actions quiz-actions--assessment">
         <button class="button button--ghost" id="backToHub">К темам</button>
         <button class="button button--ghost" id="prevQuestion" ${assessment.currentIndex === 0 ? "disabled" : ""}>Назад</button>
         <button class="button button--primary" id="nextQuestion" ${selectedAnswer === null ? "disabled" : ""}>
@@ -512,7 +517,7 @@ function renderAssessment() {
 
 function renderAssessmentHub() {
   quizApp.innerHTML = `
-    <section class="mode-panel">
+    <section class="mode-panel mode-panel--hub">
       <div class="mode-grid">
         <article class="mode-card">
           <div class="mode-card__title">Тест</div>
@@ -529,11 +534,14 @@ function renderAssessmentHub() {
           .map((doc) => {
             const ready = doc.questions.length > 0;
             return `
-              <article class="topic-card">
+              <article class="topic-card ${ready ? "topic-card--ready" : "topic-card--pending"}">
                 <div class="topic-card__title">${escapeHtml(doc.title)}</div>
                 <div class="topic-card__body">${escapeHtml(doc.description)}</div>
                 <div class="topic-card__meta">
                   ${escapeHtml(`${doc.articles.length} статей • ${doc.questions.length} вопросов в пуле`)}
+                </div>
+                <div class="topic-card__status">
+                  ${escapeHtml(doc.questionSource === "manual" ? "Готово к сдаче" : "Ожидает файл вопросов")}
                 </div>
                 <div class="topic-card__meta">
                   ${escapeHtml(doc.questionSource === "manual" ? "Источник вопросов: ручной файл" : "Файл вопросов ещё не добавлен")}
@@ -565,7 +573,7 @@ function renderExamIntake() {
   const assessment = state.assessment;
 
   quizApp.innerHTML = `
-    <section class="result-card">
+    <section class="result-card result-card--intake">
       <div class="assessment-mode-row">
         <span class="pill">Экзамен</span>
         <span class="pill">${escapeHtml(assessment.topicTitle)}</span>
@@ -648,7 +656,7 @@ function renderAssessmentResult() {
     .filter(Boolean);
 
   quizApp.innerHTML = `
-    <section class="result-card">
+    <section class="result-card result-card--report">
       <div class="assessment-mode-row">
         <span class="pill">${escapeHtml(getModeLabel(assessment.mode))}</span>
         <span class="pill">${escapeHtml(assessment.topicTitle)}</span>
