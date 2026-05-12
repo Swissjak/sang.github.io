@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экзаменация S.A.N.G.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero__badge">San Andreas National Guard</div>
+      <div class="hero__content">
+        <div class="hero__text">
+          <h1>Экзаменация Личного Состава S.A.N.G.</h1>
+          <p>
+            Официальный экзаменационный модуль для проверки знаний нормативной базы,
+            уставов и кодексов San Andreas National Guard.
+          </p>
+          <div class="hero__actions">
+            <a class="button button--primary" href="#quiz">Перейти к экзаменации</a>
+            <a class="button button--ghost" href="#library">Открыть нормативную базу</a>
+          </div>
+        </div>
+        <div class="hero__brand">
+          <img src="sang.png" alt="SANG logo">
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel" id="quiz">
+        <div class="section-heading">
+          <span class="section-heading__eyebrow">Билеты и экзамены</span>
+          <h2>Экзаменационные Темы</h2>
+        </div>
+        <p class="section-copy">
+          По каждой теме доступен отдельный билет на 10 вопросов и экзамен из 3 билетов по 10 вопросов.
+          На экзамен отводится 15 минут. Допустимо не более 3 ошибок.
+        </p>
+        <div id="quiz-app" class="quiz-app"></div>
+      </section>
+
+      <section class="panel" id="library">
+        <div class="section-heading">
+          <span class="section-heading__eyebrow">База знаний</span>
+          <h2>Статьи и кодексы</h2>
+        </div>
+        <div class="library-toolbar">
+          <input id="searchInput" type="search" placeholder="Поиск по названиям и тексту...">
+          <div id="libraryStatus" class="library-status">Загрузка материалов...</div>
+        </div>
+        <div class="library">
+          <aside id="docList" class="doc-list" aria-label="Список документов"></aside>
+          <article class="reader">
+            <div id="readerMeta" class="reader__meta">Выбери документ слева</div>
+            <pre id="readerText" class="reader__text">Здесь появится текст статьи или кодекса.</pre>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
