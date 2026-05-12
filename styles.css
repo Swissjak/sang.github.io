@@ -49,7 +49,7 @@ body::after {
   inset: auto -8vw -18vh auto;
   width: min(46vw, 620px);
   height: min(46vw, 620px);
-  background: url("CrossFamq.png") center/cover no-repeat;
+  background: url("assets/images/logos/CrossFamq.png") center/cover no-repeat;
   opacity: 0.08;
   filter: saturate(0.8) contrast(1.08) blur(2px);
   pointer-events: none;

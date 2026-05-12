@@ -1,11 +1,11 @@
-# SANG Law Test
+# CROSS Family Examination
 
 Это бесплатный статический сайт для теста по законам GTA 5 RP.
 
 ## Что уже есть
 
 - Красивая стартовая страница
-- Лого SANG на главном экране
+- Главный визуальный постер CROSS FAMILY на главном экране
 - Блок теста
 - Просмотрщик законов из `.txt`
 - Поиск по документам
@@ -16,21 +16,15 @@
 - [styles.css](C:\Users\core\Desktop\SANG SITE\styles.css) - дизайн
 - [app.js](C:\Users\core\Desktop\SANG SITE\app.js) - логика теста и загрузка статей
 
-## Где менять вопросы
+## Где лежат материалы
 
-В файле `app.js` есть массив `QUIZ_QUESTIONS`.
+- Законы и уставы: `content/laws/`
+- Файлы вопросов: `content/questions/`
+- Логотипы и постеры: `assets/images/logos/`
+- Картинки для кнопок: `assets/images/buttons/`
+- Фоны и декоративные изображения: `assets/images/backgrounds/`
 
-Пример одного вопроса:
-
-```js
-{
-  question: "Текст вопроса",
-  options: ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4"],
-  correctIndex: 1
-}
-```
-
-`correctIndex` это номер правильного ответа, начиная с `0`.
+Подробная структура описана в [STRUCTURE.md](C:\Users\core\Desktop\SANG SITE\STRUCTURE.md).
 
 ## Как запускать
 

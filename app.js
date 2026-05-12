@@ -1,59 +1,59 @@
 const LAW_FILES = [
   {
     key: "constitution",
-    file: "Конституция.txt",
+    file: "content/laws/Конституция.txt",
     title: "Конституция",
     description: "Базовые права, свободы и основы государственного устройства.",
-    questionFile: "КонституцияВопросы.txt"
+    questionFile: "content/questions/КонституцияВопросы.txt"
   },
   {
     key: "criminal",
-    file: "УК.txt",
+    file: "content/laws/УК.txt",
     title: "Уголовный кодекс",
     description: "Преступления, наказания и общие принципы уголовного права.",
-    questionFile: "УКВопросы.txt"
+    questionFile: "content/questions/УКВопросы.txt"
   },
   {
     key: "procedure",
-    file: "ПроцК.txt",
+    file: "content/laws/ПроцК.txt",
     title: "Процессуальный кодекс",
     description: "Производство по делам, порядок действий и процессуальные нормы.",
-    questionFile: "ПроцКВопросы.txt"
+    questionFile: "content/questions/ПроцКВопросы.txt"
   },
   {
     key: "civil",
-    file: "ГраджК.txt",
+    file: "content/laws/ГраджК.txt",
     title: "Гражданский кодекс",
     description: "Гражданские отношения, права, обязанности и имущество.",
-    questionFile: "ГраждКВопросы.txt"
+    questionFile: "content/questions/ГраждКВопросы.txt"
   },
   {
     key: "activity",
-    file: "ЗаконОдеятельности.txt",
+    file: "content/laws/ЗаконОдеятельности.txt",
     title: "Закон о деятельности",
     description: "Нормы профильной деятельности и служебные ограничения.",
-    questionFile: "ЗаконОдеятельностиВопросы.txt"
+    questionFile: "content/questions/ЗаконОдеятельностиВопросы.txt"
   },
   {
     key: "internal",
-    file: "ВнутУстав.txt",
+    file: "content/laws/ВнутУстав.txt",
     title: "Внутренний устав",
     description: "Внутренняя организация, правила службы и дисциплина.",
-    questionFile: "ВнутУставВопросы.txt"
+    questionFile: "content/questions/ВнутУставВопросы.txt"
   },
   {
     key: "discipline",
-    file: "ДисципУстав.txt",
+    file: "content/laws/ДисципУстав.txt",
     title: "Дисциплинарный устав",
     description: "Ответственность, взыскания и порядок дисциплинарных мер.",
-    questionFile: "ДисципУставВопросы.txt"
+    questionFile: "content/questions/ДисципУставВопросы.txt"
   },
   {
     key: "guard",
-    file: "УставКараульнойСлужбы.txt",
+    file: "content/laws/УставКараульнойСлужбы.txt",
     title: "Устав караульной службы",
     description: "Правила караула, постов и охраны объектов.",
-    questionFile: "УставКараульнойСлужбыВопросы.txt"
+    questionFile: "content/questions/УставКараульнойСлужбыВопросы.txt"
   }
 ];
 
