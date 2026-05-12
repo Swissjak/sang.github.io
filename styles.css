@@ -105,10 +105,14 @@ body > * {
   padding: 24px;
   overflow: hidden;
   background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(4, 4, 6, 0.84)),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.12) 46%, rgba(0, 0, 0, 0.58) 100%),
+    url("assets/images/banners/crossbanner.png") center/cover no-repeat,
     linear-gradient(90deg, transparent 0, rgba(255, 255, 255, 0.08) 14%, transparent 28%, transparent 72%, rgba(255, 255, 255, 0.08) 86%, transparent 100%),
     radial-gradient(circle at top right, rgba(255, 255, 255, 0.09), transparent 30%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
     rgba(7, 7, 9, 0.94);
+  background-blend-mode: normal, normal, normal, screen, screen, normal, normal;
 }
 
 .hero::after {
@@ -180,6 +184,7 @@ body > * {
 .hero__text {
   position: relative;
   z-index: 1;
+  padding: 8px 0;
 }
 
 .hero h1,
@@ -196,7 +201,7 @@ body > * {
   font-size: clamp(42px, 7vw, 78px);
   line-height: 0.95;
   text-transform: uppercase;
-  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.08);
+  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.08), 0 0 28px rgba(255, 255, 255, 0.06);
 }
 
 .hero__kicker {
@@ -224,6 +229,7 @@ body > * {
   line-height: 1.65;
   text-wrap: balance;
   color: #c9c9d1;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.28);
 }
 
 .hero__actions {
@@ -319,7 +325,7 @@ body > * {
   background:
     radial-gradient(circle at center, rgba(255, 255, 255, 0.05), transparent 58%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
-  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.28), 0 0 32px rgba(255, 255, 255, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .hero-poster__image {
@@ -327,7 +333,7 @@ body > * {
   height: 100%;
   object-fit: cover;
   transform: scale(1.02);
-  filter: grayscale(0.08) contrast(1.15) saturate(0.38) brightness(0.92);
+  filter: grayscale(0.02) contrast(1.12) saturate(0.74) brightness(0.96);
 }
 
 .hero-poster__overlay {
