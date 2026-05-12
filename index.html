@@ -15,21 +15,63 @@
       <div class="hero__badge">San Andreas National Guard</div>
       <div class="hero__content">
         <div class="hero__text">
+          <div class="hero__kicker">Официальный аттестационный терминал</div>
           <h1>Экзаменация Личного Состава S.A.N.G.</h1>
           <p>
-            Официальный экзаменационный модуль для проверки знаний нормативной базы,
-            уставов и кодексов San Andreas National Guard.
+            Единый цифровой модуль проверки знаний для военнослужащих San Andreas National Guard.
+            Билеты, экзамены и нормативная база оформлены в едином служебном стиле и готовы
+            для прохождения с телефона и компьютера.
           </p>
           <div class="hero__actions">
             <a class="button button--primary" href="#quiz">Перейти к экзаменации</a>
             <a class="button button--ghost" href="#library">Открыть нормативную базу</a>
           </div>
+          <div class="hero__meta">
+            <div class="hero-metric">
+              <span class="hero-metric__label">Формат</span>
+              <span class="hero-metric__value">Билеты и экзамены</span>
+            </div>
+            <div class="hero-metric">
+              <span class="hero-metric__label">Экзамен</span>
+              <span class="hero-metric__value">3 x 10 • 15 минут</span>
+            </div>
+            <div class="hero-metric">
+              <span class="hero-metric__label">Допуск</span>
+              <span class="hero-metric__value">Не более 3 ошибок</span>
+            </div>
+          </div>
         </div>
         <div class="hero__brand">
-          <img src="sang.png" alt="SANG logo">
+          <div class="hero-poster">
+            <img class="hero-poster__image" src="CrossFamq.png" alt="Экзаменационный постер SANG">
+            <div class="hero-poster__overlay">
+              <div class="hero-poster__caption">
+                <span>Command Interface</span>
+                <strong>Field Examination Deck</strong>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </header>
+
+    <section class="overview-strip" aria-label="Ключевая информация">
+      <article class="overview-card">
+        <span class="overview-card__label">Экзаменация</span>
+        <h2 class="overview-card__title">Структурированный Допуск</h2>
+        <p class="overview-card__body">Каждая тема оформлена как отдельный служебный модуль с билетами, экзаменом и проверкой ошибок.</p>
+      </article>
+      <article class="overview-card">
+        <span class="overview-card__label">Нормативная база</span>
+        <h2 class="overview-card__title">Быстрый Доступ</h2>
+        <p class="overview-card__body">Документы собраны в одном блоке с поиском и отдельным прокручиваемым читателем для удобной работы с телефона.</p>
+      </article>
+      <article class="overview-card">
+        <span class="overview-card__label">Контроль знаний</span>
+        <h2 class="overview-card__title">Разбор Результата</h2>
+        <p class="overview-card__body">После завершения система показывает правильные ответы, ссылки на статьи и итоговую ведомость экзаменуемого.</p>
+      </article>
+    </section>
 
     <main class="layout">
       <section class="panel" id="quiz">
@@ -65,7 +107,7 @@
   </div>
 
   <div class="version-badge" aria-label="Текущая версия сайта">
-    Версия 1.1.0
+    Версия 1.2.0
   </div>
 
   <script src="app.js"></script>

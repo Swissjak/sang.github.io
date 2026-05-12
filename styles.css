@@ -43,6 +43,19 @@ body::before {
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent);
 }
 
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto -8vw -18vh auto;
+  width: min(46vw, 620px);
+  height: min(46vw, 620px);
+  background: url("CrossFamq.png") center/cover no-repeat;
+  opacity: 0.08;
+  filter: saturate(0.8) contrast(1.08) blur(2px);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .version-badge {
   position: fixed;
   right: 16px;
@@ -65,6 +78,8 @@ body::before {
 }
 
 .page-shell {
+  position: relative;
+  z-index: 1;
   width: min(1240px, calc(100% - 32px));
   margin: 0 auto;
   padding: 24px 0 48px;
@@ -82,6 +97,10 @@ body::before {
 .hero {
   padding: 24px;
   overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(198, 245, 141, 0.12), transparent 32%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+    rgba(10, 27, 34, 0.9);
 }
 
 .hero__badge,
@@ -124,6 +143,14 @@ body::before {
   text-transform: uppercase;
 }
 
+.hero__kicker {
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .hero p,
 .section-copy,
 .reader__meta,
@@ -146,6 +173,38 @@ body::before {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
+}
+
+.hero__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.hero-metric {
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.hero-metric__label {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-metric__value {
+  display: block;
+  margin-top: 8px;
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
+  line-height: 1.05;
+  text-transform: uppercase;
 }
 
 .button {
@@ -187,23 +246,111 @@ body::before {
   justify-content: center;
   align-items: center;
   min-height: 280px;
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at center, rgba(159, 216, 110, 0.16), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
 }
 
-.hero__brand img {
-  width: min(100%, 340px);
-  object-fit: contain;
-  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.35));
+.hero-poster {
+  position: relative;
+  width: min(100%, 430px);
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.28);
+}
+
+.hero-poster__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  filter: contrast(1.05) saturate(0.92);
+}
+
+.hero-poster__overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: end;
+  padding: 18px;
+  background: linear-gradient(180deg, transparent, rgba(7, 20, 26, 0.88));
+}
+
+.hero-poster__caption {
+  min-width: 0;
+}
+
+.hero-poster__caption span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-poster__caption strong {
+  display: block;
+  margin-top: 6px;
+  font-family: "Oswald", sans-serif;
+  font-size: 26px;
+  line-height: 1.05;
+  text-transform: uppercase;
 }
 
 .layout {
   display: grid;
   gap: 24px;
   margin-top: 24px;
+}
+
+.overview-strip {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.overview-card {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+    var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.overview-card__label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(198, 245, 141, 0.18);
+  color: var(--accent-strong);
+  background: rgba(159, 216, 110, 0.08);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.overview-card__title {
+  margin: 14px 0 0;
+  font-family: "Oswald", sans-serif;
+  font-size: 30px;
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+
+.overview-card__body {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .panel {
@@ -702,6 +849,8 @@ body::before {
 
 @media (max-width: 980px) {
   .hero__content,
+  .hero__meta,
+  .overview-strip,
   .library,
   .mode-grid,
   .topic-grid,
@@ -715,6 +864,10 @@ body::before {
 
   .hero__brand {
     min-height: 220px;
+  }
+
+  .hero-poster {
+    width: min(100%, 340px);
   }
 
   .doc-list {
@@ -761,6 +914,10 @@ body::before {
     line-height: 0.98;
   }
 
+  .hero__kicker {
+    font-size: 11px;
+  }
+
   .hero p {
     margin-top: 14px;
     font-size: 15px;
@@ -786,8 +943,17 @@ body::before {
     padding: 10px;
   }
 
-  .hero__brand img {
-    width: min(100%, 220px);
+  .hero-poster {
+    width: min(100%, 290px);
+    border-radius: 24px;
+  }
+
+  .hero-poster__overlay {
+    padding: 14px;
+  }
+
+  .hero-poster__caption strong {
+    font-size: 22px;
   }
 
   .section-heading h2,
@@ -795,7 +961,8 @@ body::before {
   .result-card__title,
   .mode-card__title,
   .topic-card__title,
-  .protocol-card__title {
+  .protocol-card__title,
+  .overview-card__title {
     font-size: clamp(24px, 8vw, 34px);
     line-height: 1.05;
   }
@@ -809,6 +976,11 @@ body::before {
   .mistake-card__body,
   .mistake-card__meta,
   .reader__text {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .overview-card__body {
     font-size: 14px;
     line-height: 1.6;
   }
@@ -966,6 +1138,20 @@ body::before {
     font-size: 14px;
   }
 
+  .hero__meta {
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .hero-metric {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .hero-metric__value {
+    font-size: 20px;
+  }
+
   .quiz-app {
     margin-top: 18px;
   }
@@ -982,6 +1168,26 @@ body::before {
 
   .mode-panel--hub {
     gap: 14px;
+  }
+
+  .overview-strip {
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .overview-card {
+    padding: 14px 12px;
+    border-radius: 20px;
+  }
+
+  .overview-card__label {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 10px;
+  }
+
+  .overview-card__body {
+    font-size: 13px;
   }
 
   .topic-card {
