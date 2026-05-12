@@ -842,7 +842,7 @@ body > * {
   padding: 22px 20px;
   cursor: pointer;
   transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
-  text-align: center;
+  text-align: left;
 }
 
 .doc-card:hover,
@@ -855,19 +855,21 @@ body > * {
 }
 
 .doc-card__title {
-  font-size: clamp(28px, 3vw, 38px);
-  line-height: 1.08;
-  letter-spacing: 0.04em;
+  font-size: clamp(19px, 2.1vw, 28px);
+  line-height: 1.16;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: #efeff3;
   text-wrap: balance;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .doc-card__meta {
-  margin-top: 14px;
+  margin-top: 10px;
   color: #c3c3cc;
-  font-size: 20px;
-  line-height: 1.32;
+  font-size: 16px;
+  line-height: 1.45;
   text-wrap: balance;
 }
 
@@ -1355,7 +1357,8 @@ body > * {
   .mistake-card,
   .reader,
   .doc-card {
-    padding: 12px;
+    padding: 16px 14px;
+    border-radius: 18px;
   }
 
   .mode-panel--hub {
@@ -1393,7 +1396,9 @@ body > * {
   }
 
   .doc-card__title {
-    font-size: 22px;
+    font-size: 15px;
+    line-height: 1.18;
+    letter-spacing: 0.015em;
   }
 
   .doc-card__meta,
@@ -1404,8 +1409,9 @@ body > * {
   }
 
   .doc-card__meta {
-    font-size: 17px;
-    line-height: 1.28;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.35;
   }
 
   .reader {
