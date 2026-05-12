@@ -350,12 +350,6 @@ function getFilteredDocuments() {
   });
 }
 
-function formatDocMeta(doc) {
-  const symbolCount = doc.text.length.toLocaleString("ru-RU");
-  const articleCount = doc.articles.length.toLocaleString("ru-RU");
-  return `${doc.title} • ${symbolCount} символов • ${articleCount} статей`;
-}
-
 function renderLibrary() {
   const filtered = getFilteredDocuments();
 
@@ -381,7 +375,6 @@ function renderLibrary() {
         <button class="doc-card ${isActive ? "is-active" : ""}" data-doc-index="${originalIndex}">
           <div class="doc-card__title">${escapeHtml(doc.title)}</div>
           <div class="doc-card__meta">${escapeHtml(doc.description)}</div>
-          <div class="doc-card__meta">${escapeHtml(formatDocMeta(doc))}</div>
         </button>
       `;
     })
