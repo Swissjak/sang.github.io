@@ -1,15 +1,15 @@
 :root {
-  --bg: #07141a;
-  --bg-soft: #10242b;
-  --panel: rgba(10, 27, 34, 0.86);
-  --panel-strong: rgba(13, 33, 41, 0.96);
-  --line: rgba(153, 193, 204, 0.16);
-  --text: #e9f4f7;
-  --muted: #9fc0c8;
-  --accent: #9fd86e;
-  --accent-strong: #c6f58d;
-  --danger: #ff7a7a;
-  --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --bg: #020202;
+  --bg-soft: #0a0a0c;
+  --panel: rgba(9, 9, 11, 0.9);
+  --panel-strong: rgba(14, 14, 17, 0.96);
+  --line: rgba(220, 220, 228, 0.14);
+  --text: #f1f1f4;
+  --muted: #a6a6b0;
+  --accent: #b8bcc4;
+  --accent-strong: #fafafd;
+  --danger: #d69a9a;
+  --shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
 }
 
 * {
@@ -24,11 +24,11 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--text);
-  font-family: "Manrope", sans-serif;
+  font-family: "Cormorant Garamond", serif;
   background:
-    radial-gradient(circle at top left, rgba(159, 216, 110, 0.22), transparent 24%),
-    radial-gradient(circle at top right, rgba(74, 173, 180, 0.22), transparent 26%),
-    linear-gradient(180deg, #07141a 0%, #091c23 42%, #061015 100%);
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 20%),
+    radial-gradient(circle at top right, rgba(182, 182, 190, 0.08), transparent 22%),
+    linear-gradient(180deg, #010101 0%, #040405 42%, #09090b 100%);
 }
 
 body::before {
@@ -65,15 +65,15 @@ body::after {
   align-items: center;
   min-height: 38px;
   padding: 0 14px;
-  border: 1px solid rgba(198, 245, 141, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
   color: var(--accent-strong);
-  background: rgba(7, 20, 26, 0.88);
+  background: rgba(8, 8, 10, 0.88);
   backdrop-filter: blur(14px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -87,9 +87,12 @@ body::after {
 
 .hero,
 .panel {
+  position: relative;
   border: 1px solid var(--line);
   border-radius: 28px;
-  background: var(--panel);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+    var(--panel);
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
 }
@@ -98,9 +101,40 @@ body::after {
   padding: 24px;
   overflow: hidden;
   background:
-    radial-gradient(circle at top right, rgba(198, 245, 141, 0.12), transparent 32%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
-    rgba(10, 27, 34, 0.9);
+    linear-gradient(90deg, transparent 0, rgba(255, 255, 255, 0.08) 14%, transparent 28%, transparent 72%, rgba(255, 255, 255, 0.08) 86%, transparent 100%),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.09), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    rgba(7, 7, 9, 0.94);
+}
+
+.frame-corners {
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+  border-radius: 20px;
+  opacity: 0.9;
+}
+
+.frame-corners::before,
+.frame-corners::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(var(--accent-strong), var(--accent-strong)) left top / 42px 1px no-repeat,
+    linear-gradient(var(--accent-strong), var(--accent-strong)) left top / 1px 42px no-repeat,
+    linear-gradient(var(--accent-strong), var(--accent-strong)) right top / 42px 1px no-repeat,
+    linear-gradient(var(--accent-strong), var(--accent-strong)) right top / 1px 42px no-repeat,
+    linear-gradient(var(--accent-strong), var(--accent-strong)) left bottom / 42px 1px no-repeat,
+    linear-gradient(var(--accent-strong), var(--accent-strong)) left bottom / 1px 42px no-repeat,
+    linear-gradient(var(--accent-strong), var(--accent-strong)) right bottom / 42px 1px no-repeat,
+    linear-gradient(var(--accent-strong), var(--accent-strong)) right bottom / 1px 42px no-repeat;
+}
+
+.frame-corners::after {
+  inset: 8px;
+  opacity: 0.2;
+  filter: blur(2px);
 }
 
 .hero__badge,
@@ -110,13 +144,13 @@ body::after {
   gap: 8px;
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(198, 245, 141, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: var(--accent-strong);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  background: rgba(159, 216, 110, 0.08);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .hero__content {
@@ -127,27 +161,33 @@ body::after {
   margin-top: 22px;
 }
 
+.hero__text {
+  position: relative;
+  z-index: 1;
+}
+
 .hero h1,
 .section-heading h2,
 .doc-card__title,
 .quiz-card__title,
 .result-card__title {
   margin: 0;
-  font-family: "Oswald", sans-serif;
-  letter-spacing: 0.02em;
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.05em;
 }
 
 .hero h1 {
   font-size: clamp(42px, 7vw, 78px);
   line-height: 0.95;
   text-transform: uppercase;
+  text-shadow: 0 4px 24px rgba(255, 255, 255, 0.08);
 }
 
 .hero__kicker {
   color: var(--accent-strong);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
@@ -164,8 +204,9 @@ body::after {
 .hero p {
   max-width: 680px;
   margin: 18px 0 0;
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 21px;
+  line-height: 1.5;
+  text-wrap: balance;
 }
 
 .hero__actions {
@@ -184,25 +225,25 @@ body::after {
 
 .hero-metric {
   padding: 14px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.03);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
 }
 
 .hero-metric__label {
   display: block;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .hero-metric__value {
   display: block;
   margin-top: 8px;
-  font-family: "Oswald", sans-serif;
-  font-size: 24px;
+  font-family: "Cinzel", serif;
+  font-size: 22px;
   line-height: 1.05;
   text-transform: uppercase;
 }
@@ -231,18 +272,21 @@ body::after {
 }
 
 .button--primary {
-  color: #08150e;
-  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: #09090b;
+  background: linear-gradient(135deg, #f6f6f8, #b9bcc5 48%, #8a8e96 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 10px 26px rgba(255, 255, 255, 0.08);
 }
 
 .button--ghost {
   color: var(--text);
   border-color: var(--line);
-  background: rgba(255, 255, 255, 0.03);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.018));
 }
 
 .hero__brand {
   display: flex;
+  flex-direction: column;
+  gap: 14px;
   justify-content: center;
   align-items: center;
   min-height: 280px;
@@ -253,10 +297,12 @@ body::after {
   width: min(100%, 430px);
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 30px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.28);
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.05), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .hero-poster__image {
@@ -264,7 +310,7 @@ body::after {
   height: 100%;
   object-fit: cover;
   transform: scale(1.02);
-  filter: contrast(1.05) saturate(0.92);
+  filter: grayscale(0.08) contrast(1.15) saturate(0.38) brightness(0.92);
 }
 
 .hero-poster__overlay {
@@ -273,7 +319,7 @@ body::after {
   display: flex;
   align-items: end;
   padding: 18px;
-  background: linear-gradient(180deg, transparent, rgba(7, 20, 26, 0.88));
+  background: linear-gradient(180deg, transparent, rgba(4, 4, 6, 0.92));
 }
 
 .hero-poster__caption {
@@ -292,9 +338,40 @@ body::after {
 .hero-poster__caption strong {
   display: block;
   margin-top: 6px;
-  font-family: "Oswald", sans-serif;
-  font-size: 26px;
+  font-family: "Cinzel", serif;
+  font-size: 24px;
   line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.hero-insignia {
+  width: min(100%, 430px);
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
+    rgba(9, 9, 12, 0.86);
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.hero-insignia__label {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.hero-insignia__value {
+  display: block;
+  margin-top: 7px;
+  color: var(--accent-strong);
+  font-family: "Cinzel", serif;
+  font-size: 18px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -314,14 +391,28 @@ body::after {
 }
 
 .overview-card {
+  position: relative;
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: 24px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
     var(--panel);
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.overview-card::before,
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent) top center / 78% 1px no-repeat,
+    linear-gradient(0deg, transparent, rgba(255, 255, 255, 0.04), transparent) center right / 1px 78% no-repeat;
+  opacity: 0.9;
 }
 
 .overview-card__label {
@@ -330,18 +421,18 @@ body::after {
   min-height: 32px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid rgba(198, 245, 141, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: var(--accent-strong);
-  background: rgba(159, 216, 110, 0.08);
+  background: rgba(255, 255, 255, 0.04);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 .overview-card__title {
   margin: 14px 0 0;
-  font-family: "Oswald", sans-serif;
+  font-family: "Cinzel", serif;
   font-size: 30px;
   line-height: 1.02;
   text-transform: uppercase;
@@ -355,6 +446,7 @@ body::after {
 
 .panel {
   padding: 24px;
+  overflow: hidden;
 }
 
 .section-heading h2 {
@@ -375,7 +467,7 @@ body::after {
 .answer-option {
   border: 1px solid var(--line);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.03);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
 }
 
 .quiz-app {
@@ -434,12 +526,13 @@ body::after {
 
 .answer-option:hover {
   transform: translateY(-1px);
-  border-color: rgba(198, 245, 141, 0.35);
+  border-color: rgba(255, 255, 255, 0.26);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
 }
 
 .answer-option.is-selected {
-  border-color: rgba(198, 245, 141, 0.7);
-  background: rgba(159, 216, 110, 0.12);
+  border-color: rgba(255, 255, 255, 0.42);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
 }
 
 .answer-option__key {
@@ -449,10 +542,10 @@ body::after {
   width: 40px;
   height: 40px;
   border-radius: 14px;
-  border: 1px solid rgba(198, 245, 141, 0.18);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.03));
   color: var(--accent-strong);
-  font-family: "Oswald", sans-serif;
+  font-family: "Cinzel", serif;
   font-size: 22px;
   line-height: 1;
   text-transform: uppercase;
@@ -489,8 +582,8 @@ body::after {
 .assessment-progress__bar {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #7fd35b 0%, #c6f58d 100%);
-  box-shadow: 0 0 18px rgba(159, 216, 110, 0.25);
+  background: linear-gradient(90deg, #ffffff 0%, #c4c7cf 55%, #8c9098 100%);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
 }
 
 .quiz-note {
@@ -524,7 +617,10 @@ body::after {
 .question-box {
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.03);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+    rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .mode-card,
@@ -535,7 +631,7 @@ body::after {
 .mode-card__title,
 .topic-card__title,
 .timer-card__value {
-  font-family: "Oswald", sans-serif;
+  font-family: "Cinzel", serif;
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -543,6 +639,13 @@ body::after {
 .mode-card__title,
 .topic-card__title {
   font-size: 28px;
+}
+
+.mode-card__title,
+.topic-card__title,
+.overview-card__title,
+.section-heading h2 {
+  text-shadow: 0 3px 16px rgba(255, 255, 255, 0.07);
 }
 
 .mode-card__body,
@@ -563,7 +666,7 @@ body::after {
 
 .topic-card--ready {
   background:
-    linear-gradient(180deg, rgba(159, 216, 110, 0.06), rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
     rgba(255, 255, 255, 0.03);
 }
 
@@ -574,12 +677,12 @@ body::after {
   margin-top: 14px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid rgba(198, 245, 141, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: var(--accent-strong);
-  background: rgba(159, 216, 110, 0.08);
+  background: rgba(255, 255, 255, 0.045);
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -609,12 +712,12 @@ body::after {
   min-height: 34px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid rgba(198, 245, 141, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: var(--accent-strong);
-  background: rgba(159, 216, 110, 0.08);
+  background: rgba(255, 255, 255, 0.045);
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -624,8 +727,8 @@ body::after {
 }
 
 .timer-card--active {
-  border-color: rgba(198, 245, 141, 0.35);
-  background: rgba(159, 216, 110, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
 }
 
 .timer-card__value {
@@ -656,6 +759,12 @@ body::after {
   color: var(--text);
   background: rgba(255, 255, 255, 0.04);
   font: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.library-toolbar input::placeholder {
+  color: #8d8d97;
+  letter-spacing: 0.04em;
 }
 
 .library {
@@ -673,6 +782,11 @@ body::after {
   padding-right: 4px;
 }
 
+.doc-list,
+.reader__text {
+  scrollbar-color: rgba(255, 255, 255, 0.22) rgba(255, 255, 255, 0.05);
+}
+
 .doc-card {
   padding: 16px;
   cursor: pointer;
@@ -682,8 +796,10 @@ body::after {
 .doc-card:hover,
 .doc-card.is-active {
   transform: translateY(-1px);
-  border-color: rgba(198, 245, 141, 0.35);
-  background: rgba(159, 216, 110, 0.08);
+  border-color: rgba(255, 255, 255, 0.26);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.03);
 }
 
 .doc-card__title {
@@ -778,7 +894,8 @@ body::after {
 }
 
 .field__input:focus {
-  border-color: rgba(198, 245, 141, 0.4);
+  border-color: rgba(255, 255, 255, 0.34);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .protocol-card {
@@ -790,7 +907,7 @@ body::after {
 }
 
 .protocol-card__title {
-  font-family: "Oswald", sans-serif;
+  font-family: "Cinzel", serif;
   font-size: 28px;
   text-transform: uppercase;
 }
@@ -828,7 +945,7 @@ body::after {
 }
 
 .mistake-card__title {
-  font-family: "Oswald", sans-serif;
+  font-family: "Cinzel", serif;
   font-size: 24px;
   text-transform: uppercase;
 }
@@ -1065,7 +1182,9 @@ body::after {
     margin: 0 0 14px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 20px;
-    background: rgba(7, 20, 26, 0.94);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+      rgba(7, 7, 10, 0.94);
     backdrop-filter: blur(18px);
   }
 
@@ -1083,7 +1202,9 @@ body::after {
     padding: 12px;
     margin-top: 18px;
     border-radius: 20px;
-    background: rgba(7, 20, 26, 0.96);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+      rgba(7, 7, 10, 0.96);
     backdrop-filter: blur(18px);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
   }
@@ -1097,9 +1218,9 @@ body::after {
 @media (max-width: 560px) {
   body {
     background:
-      radial-gradient(circle at top left, rgba(159, 216, 110, 0.18), transparent 24%),
-      radial-gradient(circle at top right, rgba(74, 173, 180, 0.18), transparent 26%),
-      linear-gradient(180deg, #07141a 0%, #091c23 42%, #061015 100%);
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.1), transparent 24%),
+      radial-gradient(circle at top right, rgba(189, 189, 197, 0.08), transparent 26%),
+      linear-gradient(180deg, #030304 0%, #060608 42%, #09090b 100%);
   }
 
   body::before {
@@ -1114,6 +1235,10 @@ body::after {
   .hero,
   .panel {
     border-radius: 18px;
+  }
+
+  .frame-corners {
+    inset: 10px;
   }
 
   .hero,
@@ -1136,6 +1261,15 @@ body::after {
 
   .hero p {
     font-size: 14px;
+  }
+
+  .hero-insignia {
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .hero-insignia__value {
+    font-size: 15px;
   }
 
   .hero__meta {
