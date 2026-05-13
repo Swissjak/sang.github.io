@@ -172,7 +172,8 @@ function finalizeArticle(article) {
   return {
     number: article.number,
     title,
-    preview
+    preview,
+    content: joinedContent
   };
 }
 
@@ -256,7 +257,23 @@ function parseManualQuestions(text, document) {
 
 function startAssessment(topicKey, mode) {
   const topic = state.documents.find((doc) => doc.key === topicKey);
-  if (!topic || !topic.questions.length) {
+  if (!topic) {
+    return;
+  }
+
+  if (mode === "training") {
+    state.assessment = {
+      status: "training",
+      mode,
+      topicKey,
+      topicTitle: topic.title,
+      articleIndex: 0
+    };
+    renderAssessment();
+    return;
+  }
+
+  if (!topic.questions.length) {
     return;
   }
 
@@ -407,6 +424,11 @@ function renderAssessment() {
     return;
   }
 
+  if (assessment.status === "training") {
+    renderTraining();
+    return;
+  }
+
   if (assessment.completed) {
     renderAssessmentResult();
     return;
@@ -511,7 +533,7 @@ function renderAssessment() {
 function renderAssessmentHub() {
   quizApp.innerHTML = `
     <section class="mode-panel mode-panel--hub">
-      <div class="mode-grid">
+      <div class="mode-grid mode-grid--triple">
         <article class="mode-card">
           <div class="mode-card__title">Тест</div>
           <div class="mode-card__body">Отдельный билет по выбранной теме. В каждом тесте 10 вопросов.</div>
@@ -519,6 +541,10 @@ function renderAssessmentHub() {
         <article class="mode-card">
           <div class="mode-card__title">Экзамен</div>
           <div class="mode-card__body">3 билета по 10 вопросов. На весь экзамен даётся 15 минут.</div>
+        </article>
+        <article class="mode-card">
+          <div class="mode-card__title">Обучение</div>
+          <div class="mode-card__body">Читайте статьи и изучайте материал по теме до запуска билета или экзамена.</div>
         </article>
       </div>
 
@@ -540,6 +566,9 @@ function renderAssessmentHub() {
                   ${escapeHtml(doc.questionSource === "manual" ? "Источник вопросов: ручной файл" : "Файл вопросов ещё не добавлен")}
                 </div>
                 <div class="topic-card__actions">
+                  <button class="button button--ghost" data-start-mode="training" data-topic-key="${doc.key}">
+                    Обучение
+                  </button>
                   <button class="button button--primary" data-start-mode="test" data-topic-key="${doc.key}" ${ready ? "" : "disabled"}>
                     Билет на 10 вопросов
                   </button>
@@ -556,6 +585,90 @@ function renderAssessmentHub() {
   `;
 
   quizApp.querySelectorAll("[data-start-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      startAssessment(button.dataset.topicKey, button.dataset.startMode);
+    });
+  });
+}
+
+function renderTraining() {
+  const assessment = state.assessment;
+  const topic = state.documents.find((doc) => doc.key === assessment.topicKey);
+  if (!topic) {
+    state.assessment = null;
+    renderAssessment();
+    return;
+  }
+
+  const hasArticles = topic.articles.length > 0;
+  const safeIndex = Math.min(assessment.articleIndex || 0, Math.max(topic.articles.length - 1, 0));
+  assessment.articleIndex = safeIndex;
+  const selectedArticle = hasArticles ? topic.articles[safeIndex] : null;
+
+  quizApp.innerHTML = `
+    <section class="result-card training-card">
+      <div class="assessment-mode-row">
+        <span class="pill">Обучение</span>
+        <span class="pill">${escapeHtml(topic.title)}</span>
+        <span class="pill">${escapeHtml(hasArticles ? `Статей: ${topic.articles.length}` : "Полный документ")}</span>
+      </div>
+      <div class="result-card__title">Обучение По Теме</div>
+      <div class="result-card__body">${escapeHtml(topic.description)}</div>
+
+      <div class="training-layout">
+        <aside class="training-nav">
+          <div class="training-nav__title">${escapeHtml(hasArticles ? "Навигация по статьям" : "Материал темы")}</div>
+          ${
+            hasArticles
+              ? topic.articles
+                  .map(
+                    (article, index) => `
+                      <button class="training-item ${index === safeIndex ? "is-active" : ""}" data-article-index="${index}">
+                        <span class="training-item__title">${escapeHtml(`Статья ${article.number}`)}</span>
+                        <span class="training-item__text">${escapeHtml(article.title || article.preview)}</span>
+                      </button>
+                    `
+                  )
+                  .join("")
+              : `
+                <div class="training-item training-item--static">
+                  <span class="training-item__title">${escapeHtml(topic.title)}</span>
+                  <span class="training-item__text">${escapeHtml(topic.description)}</span>
+                </div>
+              `
+          }
+        </aside>
+
+        <article class="training-article">
+          <div class="training-article__header">
+            <div class="training-article__title">${escapeHtml(hasArticles ? `Статья ${selectedArticle.number}` : topic.title)}</div>
+            <div class="training-article__meta">${escapeHtml(hasArticles ? selectedArticle.title || "Текст статьи" : "Полный текст документа")}</div>
+          </div>
+          <pre class="training-article__text">${escapeHtml(hasArticles ? selectedArticle.content || selectedArticle.preview : topic.text)}</pre>
+        </article>
+      </div>
+
+      <div class="result-actions">
+        <button class="button button--ghost" id="backFromTraining">К темам</button>
+        <button class="button button--primary" data-start-mode="test" data-topic-key="${topic.key}" ${topic.questions.length ? "" : "disabled"}>Перейти к тесту</button>
+        <button class="button button--ghost" data-start-mode="exam" data-topic-key="${topic.key}" ${topic.questions.length ? "" : "disabled"}>Перейти к экзамену</button>
+      </div>
+    </section>
+  `;
+
+  document.getElementById("backFromTraining")?.addEventListener("click", () => {
+    state.assessment = null;
+    renderAssessment();
+  });
+
+  quizApp.querySelectorAll("[data-article-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      assessment.articleIndex = Number(button.dataset.articleIndex);
+      renderTraining();
+    });
+  });
+
+  quizApp.querySelectorAll('[data-start-mode="test"], [data-start-mode="exam"]').forEach((button) => {
     button.addEventListener("click", () => {
       startAssessment(button.dataset.topicKey, button.dataset.startMode);
     });
