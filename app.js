@@ -138,6 +138,7 @@ function parseArticles(text) {
   let current = null;
 
   for (const line of rawLines) {
+    const structuralHeadingMatch = /^(Раздел|Глава)\s+[IVXLCDM\d]+[.\s-]/i.test(line);
     const articleMatch = line.match(/^Статья\s+([\d.]+)\.?\s*(.*)$/i);
     if (articleMatch) {
       if (current) {
@@ -149,6 +150,14 @@ function parseArticles(text) {
         explicitTitle: articleMatch[2].trim(),
         lines: []
       };
+      continue;
+    }
+
+    if (structuralHeadingMatch) {
+      if (current) {
+        articles.push(finalizeArticle(current));
+        current = null;
+      }
       continue;
     }
 
