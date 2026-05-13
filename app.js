@@ -397,7 +397,7 @@ function renderLibrary() {
     return;
   }
 
-  if (!filtered.includes(state.documents[state.activeDocumentIndex])) {
+  if (!filtered.some((doc) => doc.file === state.documents[state.activeDocumentIndex]?.file)) {
     const firstMatch = filtered[0];
     state.activeDocumentIndex = state.documents.findIndex((doc) => doc.file === firstMatch.file);
   }
