@@ -603,7 +603,8 @@ function renderTraining() {
   const hasArticles = topic.articles.length > 0;
   const safeIndex = Math.min(assessment.articleIndex || 0, Math.max(topic.articles.length - 1, 0));
   assessment.articleIndex = safeIndex;
-  const selectedArticle = hasArticles ? topic.articles[safeIndex] : null;
+  const navScrollTop = assessment.navScrollTop || 0;
+  const visibleArticles = hasArticles ? topic.articles.slice(safeIndex) : [];
 
   quizApp.innerHTML = `
     <section class="result-card training-card">
@@ -640,11 +641,31 @@ function renderTraining() {
         </aside>
 
         <article class="training-article">
-          <div class="training-article__header">
-            <div class="training-article__title">${escapeHtml(hasArticles ? `Статья ${selectedArticle.number}` : topic.title)}</div>
-            <div class="training-article__meta">${escapeHtml(hasArticles ? selectedArticle.title || "Текст статьи" : "Полный текст документа")}</div>
-          </div>
-          <pre class="training-article__text">${escapeHtml(hasArticles ? selectedArticle.content || selectedArticle.preview : topic.text)}</pre>
+          ${
+            hasArticles
+              ? visibleArticles
+                  .map(
+                    (article, index) => `
+                      <section class="training-article-block ${index === 0 ? "is-primary" : ""}">
+                        <div class="training-article__header">
+                          <div class="training-article__title">${escapeHtml(`Статья ${article.number}`)}</div>
+                          <div class="training-article__meta">${escapeHtml(article.title || "Текст статьи")}</div>
+                        </div>
+                        <pre class="training-article__text">${escapeHtml(article.content || article.preview)}</pre>
+                      </section>
+                    `
+                  )
+                  .join("")
+              : `
+                <section class="training-article-block is-primary">
+                  <div class="training-article__header">
+                    <div class="training-article__title">${escapeHtml(topic.title)}</div>
+                    <div class="training-article__meta">Полный текст документа</div>
+                  </div>
+                  <pre class="training-article__text">${escapeHtml(topic.text)}</pre>
+                </section>
+              `
+          }
         </article>
       </div>
 
@@ -661,8 +682,15 @@ function renderTraining() {
     renderAssessment();
   });
 
+  const navElement = quizApp.querySelector(".training-nav");
+  if (navElement) {
+    navElement.scrollTop = navScrollTop;
+  }
+
   quizApp.querySelectorAll("[data-article-index]").forEach((button) => {
     button.addEventListener("click", () => {
+      const currentNav = quizApp.querySelector(".training-nav");
+      assessment.navScrollTop = currentNav ? currentNav.scrollTop : 0;
       assessment.articleIndex = Number(button.dataset.articleIndex);
       renderTraining();
     });
