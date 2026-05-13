@@ -400,7 +400,7 @@ function renderLibrary() {
   const activeDoc = state.documents[state.activeDocumentIndex];
   if (activeDoc) {
     readerMeta.textContent = `${activeDoc.title} • ${activeDoc.description}`;
-    readerText.textContent = activeDoc.text;
+    readerText.textContent = formatLegalText(activeDoc.text);
   }
 
   docList.querySelectorAll("[data-doc-index]").forEach((button) => {
@@ -651,7 +651,7 @@ function renderTraining() {
                           <div class="training-article__title">${escapeHtml(`Статья ${article.number}`)}</div>
                           <div class="training-article__meta">${escapeHtml(article.title || "Текст статьи")}</div>
                         </div>
-                        <pre class="training-article__text">${escapeHtml(article.content || article.preview)}</pre>
+                        <pre class="training-article__text">${escapeHtml(formatLegalText(article.content || article.preview))}</pre>
                       </section>
                     `
                   )
@@ -662,7 +662,7 @@ function renderTraining() {
                     <div class="training-article__title">${escapeHtml(topic.title)}</div>
                     <div class="training-article__meta">Полный текст документа</div>
                   </div>
-                  <pre class="training-article__text">${escapeHtml(topic.text)}</pre>
+                  <pre class="training-article__text">${escapeHtml(formatLegalText(topic.text))}</pre>
                 </section>
               `
           }
@@ -915,6 +915,19 @@ function shortenText(text, maxLength) {
   }
 
   return `${normalized.slice(0, maxLength - 1).trim()}…`;
+}
+
+function formatLegalText(text) {
+  return text
+    .replace(/\r/g, "")
+    .replace(/\u200b/g, "")
+    .replace(/ч\.\s*(\d+)(?=[А-ЯA-ZЁ])/g, "ч.$1 ")
+    .replace(/(^|\s)(Статья\s+\d+[\d.]*)/g, "\n\n$2")
+    .replace(/(^|\s)(ч\.\s*\d+)/g, "\n\n$2")
+    .replace(/([.:;])\s*([а-я])\)/gi, "$1\n$2)")
+    .replace(/\s+([а-я])\)(?=\s)/gi, "\n$1)")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function shuffle(items) {
