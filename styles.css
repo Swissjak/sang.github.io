@@ -101,6 +101,10 @@ body > * {
   backdrop-filter: blur(16px);
 }
 
+body.assessment-focus #library {
+  display: none;
+}
+
 .hero {
   padding: 24px;
   overflow: hidden;

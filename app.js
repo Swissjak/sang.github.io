@@ -119,6 +119,10 @@ function updateFloatingControls() {
   floatingTopButton?.classList.toggle("is-hidden", !showTop);
 }
 
+function syncAssessmentFocus() {
+  document.body.classList.toggle("assessment-focus", Boolean(state.assessment));
+}
+
 async function loadDocuments() {
   const results = await Promise.all(
     LAW_FILES.map(async (item) => {
@@ -494,6 +498,7 @@ function renderLibrary() {
 
 function renderAssessment() {
   const assessment = state.assessment;
+  syncAssessmentFocus();
 
   if (!assessment) {
     renderAssessmentHub();
