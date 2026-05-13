@@ -62,12 +62,16 @@ const EXAM_TICKETS = 3;
 const EXAM_QUESTION_COUNT = TEST_QUESTION_COUNT * EXAM_TICKETS;
 const EXAM_TIME_LIMIT_MS = 15 * 60 * 1000;
 const EXAM_MAX_MISTAKES = 3;
+const STORAGE_KEY = "cross-family-exam-state-v2";
+const persistedState = loadPersistedState();
 
 const state = {
   documents: [],
-  activeDocumentIndex: -1,
-  query: "",
-  assessment: null
+  activeDocumentIndex: Number.isInteger(persistedState.activeDocumentIndex) ? persistedState.activeDocumentIndex : -1,
+  query: typeof persistedState.query === "string" ? persistedState.query : "",
+  assessment: persistedState.assessment || null,
+  readArticles: persistedState.readArticles || {},
+  favoriteArticles: persistedState.favoriteArticles || {}
 };
 
 const docList = document.getElementById("docList");
@@ -79,6 +83,7 @@ const quizApp = document.getElementById("quiz-app");
 const floatingBackButton = document.getElementById("floatingBackButton");
 const floatingTopButton = document.getElementById("floatingTopButton");
 const quizSection = document.getElementById("quiz");
+searchInput.value = state.query;
 
 function scrollToQuizSection() {
   quizSection?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -86,6 +91,7 @@ function scrollToQuizSection() {
 
 function handleFloatingBack() {
   if (!state.assessment) {
+    persistState();
     return;
   }
 
@@ -121,6 +127,164 @@ function updateFloatingControls() {
 
 function syncAssessmentFocus() {
   document.body.classList.toggle("assessment-focus", Boolean(state.assessment));
+}
+
+function loadPersistedState() {
+  try {
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function persistState() {
+  const payload = {
+    activeDocumentIndex: state.activeDocumentIndex,
+    query: state.query,
+    assessment: getSerializableAssessment(),
+    readArticles: state.readArticles,
+    favoriteArticles: state.favoriteArticles
+  };
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    // Ignore storage quota and private-mode failures.
+  }
+}
+
+function getSerializableAssessment() {
+  if (!state.assessment) {
+    return null;
+  }
+
+  const { timerId, ...assessment } = state.assessment;
+  return assessment;
+}
+
+function restartAssessmentTimer() {
+  clearAssessmentTimer();
+
+  if (!state.assessment || state.assessment.mode !== "exam" || state.assessment.completed || state.assessment.status !== "active") {
+    return;
+  }
+
+  state.assessment.timerId = window.setInterval(() => {
+    if (!state.assessment || state.assessment.completed) {
+      clearAssessmentTimer();
+      return;
+    }
+
+    if (getTimeLeftMs() <= 0) {
+      finishAssessment(true);
+      return;
+    }
+
+    renderAssessment();
+  }, 1000);
+}
+
+function restorePersistedSession() {
+  if (!state.assessment) {
+    return;
+  }
+
+  const topic = state.documents.find((doc) => doc.key === state.assessment.topicKey);
+  if (!topic) {
+    state.assessment = null;
+    persistState();
+    return;
+  }
+
+  state.assessment.topicTitle = topic.title;
+
+  if (state.assessment.status === "training") {
+    state.assessment.articleIndex = Number.isInteger(state.assessment.articleIndex) ? state.assessment.articleIndex : 0;
+    state.assessment.showFavoritesOnly = Boolean(state.assessment.showFavoritesOnly);
+    return;
+  }
+
+  if (!topic.questions.length) {
+    state.assessment = null;
+    persistState();
+    return;
+  }
+
+  if (state.assessment.status === "intake") {
+    return;
+  }
+
+  if (!Array.isArray(state.assessment.questions) || !Array.isArray(state.assessment.answers)) {
+    state.assessment = null;
+    persistState();
+    return;
+  }
+
+  if (state.assessment.answers.length !== state.assessment.questionCount) {
+    state.assessment.answers = new Array(state.assessment.questionCount).fill(null).map((_, index) => state.assessment.answers[index] ?? null);
+  }
+
+  if (state.assessment.mode === "exam" && !state.assessment.completed && getTimeLeftMs() <= 0) {
+    state.assessment.expired = true;
+    state.assessment.completed = true;
+  }
+
+  restartAssessmentTimer();
+}
+
+function createArticleKey(topicKey, articleNumber) {
+  return `${topicKey}:${articleNumber}`;
+}
+
+function isArticleRead(topicKey, articleNumber) {
+  return Boolean(state.readArticles[createArticleKey(topicKey, articleNumber)]);
+}
+
+function markArticleRead(topicKey, articleNumber) {
+  const articleKey = createArticleKey(topicKey, articleNumber);
+  if (state.readArticles[articleKey]) {
+    return;
+  }
+
+  state.readArticles[articleKey] = true;
+  persistState();
+}
+
+function isArticleFavorite(topicKey, articleNumber) {
+  return Boolean(state.favoriteArticles[createArticleKey(topicKey, articleNumber)]);
+}
+
+function toggleArticleFavorite(topicKey, articleNumber) {
+  const articleKey = createArticleKey(topicKey, articleNumber);
+  if (state.favoriteArticles[articleKey]) {
+    delete state.favoriteArticles[articleKey];
+  } else {
+    state.favoriteArticles[articleKey] = true;
+  }
+
+  persistState();
+}
+
+function getFavoriteArticles(topic) {
+  return topic.articles.filter((article) => isArticleFavorite(topic.key, article.number));
+}
+
+function getReadArticleCount(topic) {
+  return topic.articles.filter((article) => isArticleRead(topic.key, article.number)).length;
+}
+
+function getReadyTopics() {
+  return state.documents.filter((doc) => doc.questions.length > 0);
+}
+
+function startRandomTicket() {
+  const readyTopics = getReadyTopics();
+  if (!readyTopics.length) {
+    return;
+  }
+
+  const topic = readyTopics[Math.floor(Math.random() * readyTopics.length)];
+  startAssessment(topic.key, "test");
 }
 
 async function loadDocuments() {
@@ -168,7 +332,14 @@ async function loadDocuments() {
   );
 
   state.documents = results;
-  state.activeDocumentIndex = results.length ? 0 : -1;
+  if (!results.length) {
+    state.activeDocumentIndex = -1;
+  } else if (state.activeDocumentIndex < 0 || state.activeDocumentIndex >= results.length) {
+    state.activeDocumentIndex = 0;
+  }
+
+  restorePersistedSession();
+  persistState();
   renderAssessment();
   renderLibrary();
 }
@@ -322,8 +493,10 @@ function startAssessment(topicKey, mode) {
       mode,
       topicKey,
       topicTitle: topic.title,
-      articleIndex: 0
+      articleIndex: 0,
+      showFavoritesOnly: false
     };
+    persistState();
     renderAssessment();
     return;
   }
@@ -339,6 +512,7 @@ function startAssessment(topicKey, mode) {
       topicKey,
       topicTitle: topic.title
     };
+    persistState();
     renderAssessment();
     return;
   }
@@ -369,22 +543,9 @@ function launchAssessment(topic, mode, identity) {
     completed: false
   };
 
-  if (mode === "exam") {
-    state.assessment.timerId = window.setInterval(() => {
-      if (!state.assessment || state.assessment.completed) {
-        clearAssessmentTimer();
-        return;
-      }
+  restartAssessmentTimer();
 
-      if (getTimeLeftMs() <= 0) {
-        finishAssessment(true);
-        return;
-      }
-
-      renderAssessment();
-    }, 1000);
-  }
-
+  persistState();
   renderAssessment();
 }
 
@@ -489,10 +650,12 @@ function renderLibrary() {
   docList.querySelectorAll("[data-doc-index]").forEach((button) => {
     button.addEventListener("click", () => {
       state.activeDocumentIndex = Number(button.dataset.docIndex);
+      persistState();
       renderLibrary();
     });
   });
 
+  persistState();
   updateFloatingControls();
 }
 
@@ -590,6 +753,7 @@ function renderAssessment() {
   quizApp.querySelectorAll("[data-answer-index]").forEach((button) => {
     button.addEventListener("click", () => {
       assessment.answers[assessment.currentIndex] = Number(button.dataset.answerIndex);
+      persistState();
       renderAssessment();
     });
   });
@@ -597,11 +761,13 @@ function renderAssessment() {
   document.getElementById("backToHub")?.addEventListener("click", () => {
     clearAssessmentTimer();
     state.assessment = null;
+    persistState();
     renderAssessment();
   });
 
   document.getElementById("prevQuestion")?.addEventListener("click", () => {
     assessment.currentIndex = Math.max(0, assessment.currentIndex - 1);
+    persistState();
     renderAssessment();
   });
 
@@ -616,6 +782,7 @@ function renderAssessment() {
     }
 
     assessment.currentIndex += 1;
+    persistState();
     renderAssessment();
   });
 
@@ -623,8 +790,15 @@ function renderAssessment() {
 }
 
 function renderAssessmentHub() {
+  const readyTopics = getReadyTopics();
+
   quizApp.innerHTML = `
     <section class="mode-panel mode-panel--hub">
+      <div class="mode-panel__toolbar">
+        <div class="mode-panel__toolbar-copy">Быстрый запуск случайного билета и доступ к сохраненному прогрессу по темам.</div>
+        <button class="button button--ghost" id="randomTicketButton" ${readyTopics.length ? "" : "disabled"}>Случайный билет</button>
+      </div>
+
       <div class="mode-grid mode-grid--triple">
         <article class="mode-card">
           <div class="mode-card__title">Тест</div>
@@ -650,6 +824,9 @@ function renderAssessmentHub() {
                 <div class="topic-card__body">${escapeHtml(doc.description)}</div>
                 <div class="topic-card__meta">
                   ${escapeHtml(`${doc.articles.length} статей • ${doc.questions.length} вопросов в пуле`)}
+                </div>
+                <div class="topic-card__meta">
+                  ${escapeHtml(`Прочитано: ${getReadArticleCount(doc)} • Избранное: ${getFavoriteArticles(doc).length}`)}
                 </div>
                 <div class="topic-card__status">
                   ${escapeHtml(doc.questionSource === "manual" ? "Готово к сдаче" : "Ожидает файл вопросов")}
@@ -681,6 +858,12 @@ function renderAssessmentHub() {
       startAssessment(button.dataset.topicKey, button.dataset.startMode);
     });
   });
+
+  document.getElementById("randomTicketButton")?.addEventListener("click", () => {
+    startRandomTicket();
+  });
+
+  persistState();
 }
 
 function renderTraining() {
@@ -693,16 +876,37 @@ function renderTraining() {
   }
 
   const hasArticles = topic.articles.length > 0;
-  const safeIndex = Math.min(assessment.articleIndex || 0, Math.max(topic.articles.length - 1, 0));
-  assessment.articleIndex = safeIndex;
   const navScrollTop = assessment.navScrollTop || 0;
-  const visibleArticles = hasArticles ? topic.articles.slice(safeIndex) : [];
+  const showFavoritesOnly = Boolean(assessment.showFavoritesOnly);
+  const favoriteArticles = getFavoriteArticles(topic);
+  const orderedArticles = showFavoritesOnly ? favoriteArticles : topic.articles;
+  let safeIndex = Math.min(assessment.articleIndex || 0, Math.max(topic.articles.length - 1, 0));
+  let activeArticle = hasArticles ? topic.articles[safeIndex] : null;
+
+  if (hasArticles && orderedArticles.length && !orderedArticles.some((article) => article.number === activeArticle?.number)) {
+    activeArticle = orderedArticles[0];
+    safeIndex = topic.articles.findIndex((article) => article.number === activeArticle.number);
+  }
+
+  assessment.articleIndex = Math.max(0, safeIndex);
+  const activeOrderedIndex = activeArticle ? orderedArticles.findIndex((article) => article.number === activeArticle.number) : -1;
+  const visibleArticles = hasArticles
+    ? orderedArticles.length
+      ? orderedArticles.slice(Math.max(0, activeOrderedIndex))
+      : []
+    : [];
+
+  if (activeArticle) {
+    markArticleRead(topic.key, activeArticle.number);
+  }
 
   quizApp.innerHTML = `
     <section class="result-card training-card">
       <div class="assessment-mode-row">
         <span class="pill">Обучение</span>
         <span class="pill">${escapeHtml(topic.title)}</span>
+        <span class="pill">${escapeHtml(`Прочитано: ${getReadArticleCount(topic)}`)}</span>
+        <span class="pill">${escapeHtml(`Избранное: ${favoriteArticles.length}`)}</span>
         <span class="pill">${escapeHtml(hasArticles ? `Статей: ${topic.articles.length}` : "Полный документ")}</span>
       </div>
       <div class="result-card__title">Обучение По Теме</div>
@@ -710,19 +914,31 @@ function renderTraining() {
 
       <div class="training-layout">
         <aside class="training-nav">
+          ${hasArticles ? `<button class="training-filter ${showFavoritesOnly ? "is-active" : ""}" id="toggleTrainingFavorites" type="button">${showFavoritesOnly ? "Все статьи" : "Избранные"}</button>` : ""}
           <div class="training-nav__title">${escapeHtml(hasArticles ? "Навигация по статьям" : "Материал темы")}</div>
           ${
             hasArticles
-              ? topic.articles
+              ? orderedArticles.length
+                ? orderedArticles
                   .map(
-                    (article, index) => `
-                      <button class="training-item ${index === safeIndex ? "is-active" : ""}" data-article-index="${index}">
+                    (article) => `
+                      <button class="training-item ${article.number === activeArticle?.number ? "is-active" : ""}" data-article-index="${topic.articles.findIndex((item) => item.number === article.number)}">
                         <span class="training-item__title">${escapeHtml(`Статья ${article.number}`)}</span>
                         <span class="training-item__text">${escapeHtml(article.title || article.preview)}</span>
+                        <span class="training-item__flags">
+                          ${isArticleRead(topic.key, article.number) ? '<span class="training-flag">Прочитано</span>' : ""}
+                          ${isArticleFavorite(topic.key, article.number) ? '<span class="training-flag training-flag--favorite">Избранное</span>' : ""}
+                        </span>
                       </button>
                     `
                   )
                   .join("")
+                : `
+                  <div class="training-item training-item--static">
+                    <span class="training-item__title">Нет избранных статей</span>
+                    <span class="training-item__text">Отметьте важные статьи звездой, и здесь появится отдельный список.</span>
+                  </div>
+                `
               : `
                 <div class="training-item training-item--static">
                   <span class="training-item__title">${escapeHtml(topic.title)}</span>
@@ -735,7 +951,8 @@ function renderTraining() {
         <article class="training-article">
           ${
             hasArticles
-              ? visibleArticles
+              ? visibleArticles.length
+                ? visibleArticles
                   .map(
                     (article, index) => `
                       <section class="training-article-block ${index === 0 ? "is-primary" : ""}">
@@ -748,6 +965,15 @@ function renderTraining() {
                     `
                   )
                   .join("")
+                : `
+                  <section class="training-article-block is-primary">
+                    <div class="training-article__header">
+                      <div class="training-article__title">Избранные статьи</div>
+                      <div class="training-article__meta">Список пока пуст</div>
+                    </div>
+                    <pre class="training-article__text">Добавьте статьи в избранное, чтобы собирать здесь отдельный список важных материалов.</pre>
+                  </section>
+                `
               : `
                 <section class="training-article-block is-primary">
                   <div class="training-article__header">
@@ -771,6 +997,7 @@ function renderTraining() {
 
   document.getElementById("backFromTraining")?.addEventListener("click", () => {
     state.assessment = null;
+    persistState();
     renderAssessment();
   });
 
@@ -779,11 +1006,63 @@ function renderTraining() {
     navElement.scrollTop = navScrollTop;
   }
 
+  document.getElementById("toggleTrainingFavorites")?.addEventListener("click", () => {
+    assessment.showFavoritesOnly = !assessment.showFavoritesOnly;
+    if (assessment.showFavoritesOnly && favoriteArticles.length) {
+      assessment.articleIndex = topic.articles.findIndex((article) => article.number === favoriteArticles[0].number);
+    }
+    persistState();
+    renderTraining();
+  });
+
   quizApp.querySelectorAll("[data-article-index]").forEach((button) => {
     button.addEventListener("click", () => {
       const currentNav = quizApp.querySelector(".training-nav");
       assessment.navScrollTop = currentNav ? currentNav.scrollTop : 0;
       assessment.articleIndex = Number(button.dataset.articleIndex);
+      persistState();
+      renderTraining();
+    });
+  });
+
+  quizApp.querySelectorAll(".training-item").forEach((item, index) => {
+    const article = orderedArticles[index];
+    if (!article) {
+      return;
+    }
+
+    if (showFavoritesOnly && !isArticleFavorite(topic.key, article.number)) {
+      item.hidden = true;
+      return;
+    }
+
+    if (showFavoritesOnly) {
+      item.hidden = false;
+    }
+  });
+
+  quizApp.querySelectorAll(".training-article__header").forEach((header, index) => {
+    const article = visibleArticles[index];
+    if (!article) {
+      return;
+    }
+
+    header.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div class="training-article__tools">
+          <span class="training-flag">${isArticleRead(topic.key, article.number) ? "Прочитано" : "Новая"}</span>
+          <button class="training-star ${isArticleFavorite(topic.key, article.number) ? "is-active" : ""}" type="button" data-favorite-article="${article.number}">
+            ${isArticleFavorite(topic.key, article.number) ? "★" : "☆"}
+          </button>
+        </div>
+      `
+    );
+  });
+
+  quizApp.querySelectorAll("[data-favorite-article]").forEach((button) => {
+    button.addEventListener("click", () => {
+      toggleArticleFavorite(topic.key, String(button.dataset.favoriteArticle));
       renderTraining();
     });
   });
@@ -794,6 +1073,7 @@ function renderTraining() {
     });
   });
 
+  persistState();
   updateFloatingControls();
 }
 
@@ -834,6 +1114,7 @@ function renderExamIntake() {
 
   document.getElementById("cancelExamStart")?.addEventListener("click", () => {
     state.assessment = null;
+    persistState();
     renderAssessment();
   });
 
@@ -955,6 +1236,7 @@ function renderAssessmentResult() {
   document.getElementById("backToTopics")?.addEventListener("click", () => {
     clearAssessmentTimer();
     state.assessment = null;
+    persistState();
     renderAssessment();
   });
 }
@@ -967,6 +1249,7 @@ function finishAssessment(expired) {
   clearAssessmentTimer();
   state.assessment.expired = expired;
   state.assessment.completed = true;
+  persistState();
   renderAssessment();
 }
 
@@ -1092,6 +1375,7 @@ function escapeHtml(value) {
 
 searchInput.addEventListener("input", (event) => {
   state.query = event.target.value;
+  persistState();
   renderLibrary();
 });
 
