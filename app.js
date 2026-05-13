@@ -427,6 +427,17 @@ function renderLibrary() {
     readerText.innerHTML = state.query.trim()
       ? highlightMatch(formattedText, state.query)
       : escapeHtml(formattedText);
+
+    if (state.query.trim()) {
+      requestAnimationFrame(() => {
+        const firstHit = readerText.querySelector(".search-hit");
+        if (firstHit) {
+          firstHit.scrollIntoView({ block: "center", behavior: "smooth" });
+        }
+      });
+    } else {
+      readerText.scrollTop = 0;
+    }
   }
 
   docList.querySelectorAll("[data-doc-index]").forEach((button) => {
