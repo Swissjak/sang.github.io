@@ -361,10 +361,19 @@ function getFilteredDocuments() {
     return state.documents;
   }
 
-  return state.documents.filter((doc) => {
-    const haystack = `${doc.title}\n${doc.description}\n${doc.text}`.toLowerCase();
-    return haystack.includes(query);
-  });
+  return state.documents
+    .map((doc) => {
+      const haystack = `${doc.title}\n${doc.description}\n${doc.text}`.toLowerCase();
+      const matchIndex = haystack.indexOf(query);
+      return matchIndex >= 0
+        ? {
+            ...doc,
+            matchIndex,
+            matchExcerpt: createMatchExcerpt(doc.text, query)
+          }
+        : null;
+    })
+    .filter(Boolean);
 }
 
 function renderLibrary() {
@@ -392,6 +401,11 @@ function renderLibrary() {
         <button class="doc-card ${isActive ? "is-active" : ""}" data-doc-index="${originalIndex}">
           <div class="doc-card__title">${escapeHtml(doc.title)}</div>
           <div class="doc-card__meta">${escapeHtml(doc.description)}</div>
+          ${
+            doc.matchExcerpt
+              ? `<div class="doc-card__match">${highlightMatch(doc.matchExcerpt, state.query)}</div>`
+              : ""
+          }
         </button>
       `;
     })
@@ -400,7 +414,10 @@ function renderLibrary() {
   const activeDoc = state.documents[state.activeDocumentIndex];
   if (activeDoc) {
     readerMeta.textContent = `${activeDoc.title} • ${activeDoc.description}`;
-    readerText.textContent = formatLegalText(activeDoc.text);
+    const formattedText = formatLegalText(activeDoc.text);
+    readerText.innerHTML = state.query.trim()
+      ? highlightMatch(formattedText, state.query)
+      : escapeHtml(formattedText);
   }
 
   docList.querySelectorAll("[data-doc-index]").forEach((button) => {
@@ -928,6 +945,41 @@ function formatLegalText(text) {
     .replace(/\s+([а-я])\)(?=\s)/gi, "\n$1)")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+function createMatchExcerpt(text, query) {
+  const normalized = formatLegalText(text);
+  const lowerText = normalized.toLowerCase();
+  const lowerQuery = query.toLowerCase().trim();
+  const matchIndex = lowerText.indexOf(lowerQuery);
+
+  if (matchIndex < 0) {
+    return "";
+  }
+
+  const start = Math.max(0, matchIndex - 80);
+  const end = Math.min(normalized.length, matchIndex + lowerQuery.length + 120);
+  const prefix = start > 0 ? "…" : "";
+  const suffix = end < normalized.length ? "…" : "";
+
+  return `${prefix}${normalized.slice(start, end).trim()}${suffix}`;
+}
+
+function highlightMatch(text, query) {
+  const safeText = escapeHtml(text);
+  const trimmedQuery = query.trim();
+
+  if (!trimmedQuery) {
+    return safeText;
+  }
+
+  const safeQuery = escapeRegex(escapeHtml(trimmedQuery));
+  const pattern = new RegExp(`(${safeQuery})`, "gi");
+  return safeText.replace(pattern, '<mark class="search-hit">$1</mark>');
+}
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function shuffle(items) {
