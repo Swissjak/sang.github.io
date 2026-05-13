@@ -76,6 +76,48 @@ const readerText = document.getElementById("readerText");
 const libraryStatus = document.getElementById("libraryStatus");
 const searchInput = document.getElementById("searchInput");
 const quizApp = document.getElementById("quiz-app");
+const floatingBackButton = document.getElementById("floatingBackButton");
+const floatingTopButton = document.getElementById("floatingTopButton");
+const quizSection = document.getElementById("quiz");
+
+function scrollToQuizSection() {
+  quizSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function handleFloatingBack() {
+  if (!state.assessment) {
+    return;
+  }
+
+  clearAssessmentTimer();
+  state.assessment = null;
+  renderAssessment();
+  scrollToQuizSection();
+}
+
+function handleFloatingTop() {
+  if (readerText.scrollTop > 140) {
+    readerText.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  if (state.assessment?.status === "training") {
+    quizApp.querySelector(".training-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateFloatingControls() {
+  const showBack = Boolean(state.assessment);
+  const readerHasLongScroll = readerText.scrollTop > 140;
+  const pageHasLongScroll = window.scrollY > 260;
+  const showTop = readerHasLongScroll || pageHasLongScroll;
+
+  floatingBackButton?.classList.toggle("is-hidden", !showBack);
+  floatingTopButton?.classList.toggle("is-hidden", !showTop);
+}
 
 async function loadDocuments() {
   const results = await Promise.all(
@@ -446,6 +488,8 @@ function renderLibrary() {
       renderLibrary();
     });
   });
+
+  updateFloatingControls();
 }
 
 function renderAssessment() {
@@ -453,21 +497,25 @@ function renderAssessment() {
 
   if (!assessment) {
     renderAssessmentHub();
+    updateFloatingControls();
     return;
   }
 
   if (assessment.status === "intake") {
     renderExamIntake();
+    updateFloatingControls();
     return;
   }
 
   if (assessment.status === "training") {
     renderTraining();
+    updateFloatingControls();
     return;
   }
 
   if (assessment.completed) {
     renderAssessmentResult();
+    updateFloatingControls();
     return;
   }
 
@@ -565,6 +613,8 @@ function renderAssessment() {
     assessment.currentIndex += 1;
     renderAssessment();
   });
+
+  updateFloatingControls();
 }
 
 function renderAssessmentHub() {
@@ -738,6 +788,8 @@ function renderTraining() {
       startAssessment(button.dataset.topicKey, button.dataset.startMode);
     });
   });
+
+  updateFloatingControls();
 }
 
 function renderExamIntake() {
@@ -1037,6 +1089,11 @@ searchInput.addEventListener("input", (event) => {
   state.query = event.target.value;
   renderLibrary();
 });
+
+readerText.addEventListener("scroll", updateFloatingControls);
+window.addEventListener("scroll", updateFloatingControls, { passive: true });
+floatingBackButton?.addEventListener("click", handleFloatingBack);
+floatingTopButton?.addEventListener("click", handleFloatingTop);
 
 renderAssessment();
 loadDocuments();

@@ -305,6 +305,50 @@ body > * {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.018));
 }
 
+.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.floating-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 72px;
+  z-index: 30;
+  display: grid;
+  gap: 10px;
+}
+
+.floating-button {
+  min-width: 120px;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  color: var(--text);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(8, 8, 10, 0.88);
+  backdrop-filter: blur(14px);
+  font-family: "Oswald", sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.34);
+  transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.floating-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.floating-button--back {
+  min-width: 132px;
+}
+
 .layout {
   display: grid;
   gap: 24px;
@@ -1146,6 +1190,20 @@ body > * {
     padding: 18px;
   }
 
+  .floating-controls {
+    right: 14px;
+    bottom: 88px;
+    gap: 8px;
+  }
+
+  .floating-button {
+    min-width: 108px;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: 14px;
+    font-size: 16px;
+  }
+
   .hero__content {
     gap: 18px;
     margin-top: 16px;
@@ -1357,6 +1415,18 @@ body > * {
 }
 
 @media (max-width: 560px) {
+  .floating-controls {
+    right: 12px;
+    bottom: 92px;
+  }
+
+  .floating-button {
+    min-width: 98px;
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 15px;
+  }
+
   body {
     background:
       radial-gradient(circle at top left, rgba(255, 255, 255, 0.1), transparent 24%),
